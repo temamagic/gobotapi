@@ -814,6 +814,44 @@ func (m *Message) CommandArguments() string {
 	return m.Text[entity.Length+1:]
 }
 
+// Type helper method to determine the type of the message.
+func (m *Message) Type() string {
+	switch true {
+	case m.Photo != nil:
+		return "photo"
+	case m.Video != nil:
+		return "video"
+	case m.Animation != nil:
+		return "animation"
+	case m.Audio != nil:
+		return "audio"
+	case m.Document != nil:
+		return "document"
+	case m.Sticker != nil:
+		return "sticker"
+	case m.Voice != nil:
+		return "voice"
+	case m.VideoNote != nil:
+		return "video_note"
+	case m.Contact != nil:
+		return "contact"
+	case m.Location != nil:
+		return "location"
+	case m.Venue != nil:
+		return "venue"
+	case m.Game != nil:
+		return "game"
+	case m.Poll != nil:
+		return "poll"
+	}
+
+	if m.Text != "" {
+		return "text"
+	}
+
+	return "other"
+}
+
 // MessageID represents a unique message identifier.
 type MessageID struct {
 	MessageID int `json:"message_id"`
