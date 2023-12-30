@@ -72,6 +72,23 @@ func NewBotAPIWithClient(token, apiEndpoint string, client HTTPClient) (*BotAPI,
 	return bot, nil
 }
 
+func NewBotAPIWithClientSkipSelf(token, apiEndpoint string, client HTTPClient) (*BotAPI, error) {
+	bot := &BotAPI{
+		Token:           token,
+		Client:          client,
+		Buffer:          100,
+		shutdownChannel: make(chan interface{}),
+
+		ApiEndpoint: apiEndpoint,
+	}
+
+	return bot, nil
+}
+
+func NewBotAPISkipSelf(token string) (*BotAPI, error) {
+	return NewBotAPIWithClient(token, APIEndpoint, &http.Client{})
+}
+
 // SetAPIEndpoint changes the Telegram Bot API endpoint used by the instance.
 func (bot *BotAPI) SetAPIEndpoint(apiEndpoint string) {
 	bot.ApiEndpoint = apiEndpoint
