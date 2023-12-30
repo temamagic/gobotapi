@@ -114,6 +114,12 @@ type Update struct {
 	//
 	// optional
 	ChatJoinRequest *ChatJoinRequest `json:"chat_join_request,omitempty"`
+	// optional
+	MessageReaction *MessageReactionUpdated `json:"message_reaction,omitempty"`
+	// MessageReactionCount is a reaction to a message
+	//
+	// optional
+	MessageReactionCount *MessageReactionCountUpdated `json:"message_reaction_count,omitempty"`
 }
 
 // SentFrom returns the user who sent an update. Can be nil, if Telegram did not provide information
@@ -140,6 +146,8 @@ func (u *Update) SentFrom() *User {
 		return &u.MyChatMember.From
 	case u.ChatJoinRequest != nil:
 		return &u.ChatJoinRequest.From
+	case u.MessageReaction != nil && u.MessageReaction.User != nil:
+		return u.MessageReaction.User
 	default:
 		return nil
 	}
@@ -172,6 +180,10 @@ func (u *Update) FromChat() *Chat {
 		return &u.MyChatMember.Chat
 	case u.ChatMember != nil:
 		return &u.ChatMember.Chat
+	case u.MessageReaction != nil:
+		return &u.MessageReaction.Chat
+	case u.MessageReactionCount != nil:
+		return &u.MessageReactionCount.Chat
 	default:
 		return nil
 	}
@@ -290,6 +302,11 @@ type Chat struct {
 	ActiveUsernames []string `json:"active_usernames,omitempty"`
 	// Custom emoji identifier of emoji status of the other party
 	// in a private chat. Returned only in getChat.
+	//
+	// optional
+	AvailableReactions []MessageReaction `json:"available_reactions,omitempty"`
+	// List of available reactions allowed in the chat. If omitted, then all emoji reactions are allowed.
+	// Returned only in getChat.
 	//
 	// optional
 	EmojiStatusCustomEmojiID string `json:"emoji_status_custom_emoji_id,omitempty"`
