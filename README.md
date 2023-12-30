@@ -19,6 +19,45 @@ I only update it when there is a need for it for me, or a good update has been s
 
 As a basis, I also take another [repository](https://github.com/OvyFlash/telegram-bot-api), which is updated quite often (at the time of writing this note), thanks to him!
 
-## Install
+## Install & Update
 
-`go get -u github.com/temamagic/tg-bot-api`.
+`go get -u github.com/temamagic/gobotapi`.
+
+## Example
+
+```
+package main
+
+import (
+	"log"
+
+	tgbotapi "github.com/temamagic/gobotapi"
+)
+
+func main() {
+	bot, err := tgbotapi.NewBotAPI("MyAwesomeBotToken")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	bot.Debug = true
+
+	log.Printf("Authorized on account %s", bot.Self.UserName)
+
+	u := tgbotapi.NewUpdate(0)
+	u.Timeout = 60
+
+	updates := bot.GetUpdatesChan(u)
+
+	for update := range updates {
+		if update.Message != nil { // If we got a message
+			log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
+
+			msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
+			msg.ReplyToMessageID = update.Message.MessageID
+
+			bot.Send(msg)
+		}
+	}
+}
+```
