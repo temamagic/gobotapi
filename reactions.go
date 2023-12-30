@@ -91,7 +91,7 @@ func (config SetReactionConfig) params() (Params, error) {
 	return params, nil
 }
 
-// SetEmojiReaction creates a new forum topic with name
+// SetEmojiReaction sets a reaction to a message
 // Currently, it can be one of "👍", "👎", "❤", "🔥", "🥰", "👏", "😁", "🤔",
 // "🤯", "😱", "🤬", "😢", "🎉", "🤩", "🤮", "💩", "🙏", "👌", "🕊", "🤡", "🥱",
 // "🥴", "😍", "🐳", "❤‍🔥", "🌚", "🌭", "💯", "🤣", "⚡", "🍌", "🏆", "💔", "🤨",
@@ -99,17 +99,24 @@ func (config SetReactionConfig) params() (Params, error) {
 // "🙈", "😇", "😨", "🤝", "✍", "🤗", "🫡", "🎅", "🎄", "☃", "💅", "🤪", "🗿", "🆒",
 // "💘", "🙉", "🦄", "😘", "💊", "🙊", "😎", "👾", "🤷‍♂", "🤷", "🤷‍♀", "😡"
 func (bot *BotAPI) SetEmojiReaction(chatID int64, messageID int, reaction string, isBig bool) (Message, error) {
+	reactions := []MessageReaction{
+		{
+			Type:  "emoji",
+			Emoji: reaction,
+		},
+	}
+
+	if reaction == "" {
+		reactions = []MessageReaction{}
+		isBig = false
+	}
+
 	return bot.Send(SetReactionConfig{
 		BaseChat: BaseChat{
 			ChatID: chatID,
 		},
 		MessageID: messageID,
-		Reaction: []MessageReaction{
-			{
-				Type:  "emoji",
-				Emoji: reaction,
-			},
-		},
-		IsBig: isBig,
+		Reaction:  reactions,
+		IsBig:     isBig,
 	})
 }
