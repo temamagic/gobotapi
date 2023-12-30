@@ -98,7 +98,7 @@ func (config SetReactionConfig) params() (Params, error) {
 // "😐", "🍓", "🍾", "💋", "🖕", "😈", "😴", "😭", "🤓", "👻", "👨‍💻", "👀", "🎃",
 // "🙈", "😇", "😨", "🤝", "✍", "🤗", "🫡", "🎅", "🎄", "☃", "💅", "🤪", "🗿", "🆒",
 // "💘", "🙉", "🦄", "😘", "💊", "🙊", "😎", "👾", "🤷‍♂", "🤷", "🤷‍♀", "😡"
-func (bot *BotAPI) SetEmojiReaction(chatID int64, messageID int, reaction string, isBig bool) (Message, error) {
+func (bot *BotAPI) SetEmojiReaction(chatID int64, messageID int, reaction string, isBig bool) error {
 	reactions := []MessageReaction{
 		{
 			Type:  "emoji",
@@ -111,7 +111,7 @@ func (bot *BotAPI) SetEmojiReaction(chatID int64, messageID int, reaction string
 		isBig = false
 	}
 
-	return bot.Send(SetReactionConfig{
+	_, err := bot.Send(SetReactionConfig{
 		BaseChat: BaseChat{
 			ChatID: chatID,
 		},
@@ -119,4 +119,9 @@ func (bot *BotAPI) SetEmojiReaction(chatID int64, messageID int, reaction string
 		Reaction:  reactions,
 		IsBig:     isBig,
 	})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
