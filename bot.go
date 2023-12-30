@@ -18,6 +18,7 @@ import (
 // HTTPClient is the type needed for the bot to perform HTTP requests.
 type HTTPClient interface {
 	Do(req *http.Request) (*http.Response, error)
+	Get(url string) (resp *http.Response, err error)
 }
 
 // BotAPI allows you to interact with the Telegram Bot API.
@@ -291,6 +292,27 @@ func (bot *BotAPI) GetFileDirectURL(fileID string) (string, error) {
 	}
 
 	return file.Link(bot.Token), nil
+}
+
+func (bot *BotAPI) DownloadFile(fileID string) (body []byte, err error) {
+	fileURL, err := bot.GetFileDirectURL(fileID)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := bot.Client.Get(fileURL)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+
+	body, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return body, nil
 }
 
 // GetMe fetches the currently authenticated bot.
