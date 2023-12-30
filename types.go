@@ -500,6 +500,10 @@ type Message struct {
 	//
 	// optional
 	ReplyToMessage *Message `json:"reply_to_message,omitempty"`
+	// TextQuote For replies that quote part of the original message, the quoted part of the message
+	//
+	// optional
+	Quote *Quote `json:"quote,omitempty"`
 	// ViaBot through which the message was sent;
 	//
 	// optional
@@ -981,6 +985,11 @@ func (e MessageEntity) IsPre() bool {
 // IsTextLink returns true if the type of the message entity is "text_link" (clickable text URL).
 func (e MessageEntity) IsTextLink() bool {
 	return e.Type == "text_link"
+}
+
+// IsQuote returns true if the type of the message entity is "blockquote" (quote).
+func (e MessageEntity) IsQuote() bool {
+	return e.Type == "blockquote"
 }
 
 // PhotoSize represents one size of a photo or a file / sticker thumbnail.
